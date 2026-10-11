@@ -1,0 +1,12 @@
+node_modules/
+.venv/
+out/
+.env
+runs/_mcp.json
+runs/*/audio/raw/
+runs/*/audio/archive/
+runs/*/previews/
+runs/*/deliverables/
+runs/*/distribution/
+.DS_Store
+*.log
