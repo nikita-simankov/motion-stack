@@ -37,6 +37,14 @@ Every video is a <Composition> in src/Root.tsx with explicit:
 - Clicks trigger state changes via frame thresholds
 - All timing uses frame counts, never seconds
 
+## Motion runtime (token contract v2)
+
+- Every project carries `src/motion/` (copied by `/ms-setup scaffold` from `ms-motion-designer/templates/motion/`). Scenes read curves, springs and stagger through `useMotion()`; they never import `Easing` or inline a spring config.
+- Packages are pinned together at 4.0.534, with React 19.1 (the 4.0.534 `@remotion/transitions` references React 19 internals; React 18.3.1 fails the bundle).
+- Motion blur: `@remotion/motion-blur` (`CameraMotionBlur` by default). Kinetic type fitting: `@remotion/layout-utils`. Seeded noise: `@remotion/noise`. Path morphs: `@remotion/paths`. Audio-reactive: `@remotion/media-utils`.
+- Lint: `ms-setup/audit-motion.sh`. Proof sheet: `ms-motion-designer/scripts/proof_sheet.py`.
+- Remotion versions move fast. Re-verify any API named in a reference against the pinned version before relying on it; `ms-setup upgrade` re-runs the self-tests.
+
 ## Render pipeline
 
 - Local render: npx remotion render <composition-id>

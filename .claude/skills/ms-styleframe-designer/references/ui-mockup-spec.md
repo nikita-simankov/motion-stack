@@ -46,8 +46,17 @@ Each state carries:
 - sizePx (default 24)
 - shape arrow | dot | custom
 - blendMode normal | difference
-- easing ease-in-out (default)
-- movement implemented via interpolate for position; click events via frame thresholds
+- easing ease-in-out (default, v1)
+- v2: `curve` (default out-quart, the `cursor` role) and `path: smoothed`: each leg of the path eases with the curve, and a small overshoot comes from the curve choice, not from hand-tuned positions
+- movement implemented via interpolate for position; click events via frame thresholds; click feedback is the `snappy` spring
+
+## Smart zoom (v2)
+
+`uiMockup.smartZoom`: `{ enabled, maxZoom (1.6), followLagFrames (10), transitionFrames (18) }`. The camera follows the cursor with lag and zooms into the control being used, then back out to the result. See `ms-motion-designer/references/camera-rig.md`.
+
+## Typing (v2)
+
+`uiMockup.typing`: `{ cadenceFrames: { min, max }, seed }`. Characters arrive at a seeded irregular cadence so typing reads as human. The seed is a constant; same seed, same cadence.
 
 ## Typography inside UI
 

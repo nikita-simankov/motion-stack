@@ -311,6 +311,7 @@ references/music-sourcing.md Library search, brief derivation, selection criteri
 references/music-licensing.md License record, clearance, Content ID, monetization
 references/cue-sheet.md Cue sheet schema, CSV columns, render template
 references/music-editing.md Cutting cues to picture, hit alignment, tempo mapping
+references/beat-grid.md Beat grid extraction, cut snapping, audio-reactive visuals (v2)
 references/music-mix.md Ducking, gain staging, mix bus, loudness
 references/music-qa.md Music QA checklist, codes, thresholds
 references/music-protocol.md Cue, source, compose, cut, duck, mix, cuesheet, audit

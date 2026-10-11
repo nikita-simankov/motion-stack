@@ -44,6 +44,8 @@ Two artifacts: styleframes.json (the frame set) and style-tokens.json (the froze
 
 ## style-tokens.json
 
+Current contract: `tokenVersion: 2`. The block below is the v1 base shape, which every v2 file still contains. The v2 additions follow it. Files without `tokenVersion` are v1 (see `token-migration-v1-to-v2.md`).
+
 {
 "projectId": "string",
 "frozenAt": "ISO8601",
@@ -174,6 +176,80 @@ Two artifacts: styleframes.json (the frame set) and style-tokens.json (the froze
 "frozen": true
 }
 
+## style-tokens.json: v2 additions (tokenVersion 2)
+
+Add to the base shape above. Values shown are the defaults in `ms-setup/tokens-v2-defaults.json` (punchy tone).
+
+{
+"tokenVersion": 2,
+"migratedFrom": null,
+"reapprovalRequired": false,
+"look": { "bundleId": "dark-product-ui", "source": "bundle | override | migrated" },
+"palette": {
+"gradients": [
+{ "id": "bg-mesh", "type": "mesh", "base": "#0A0A0A",
+"points": [{ "color": "#3B82F6", "x": 20, "y": 25, "radiusPct": 55 }],
+"seed": "bg-mesh-1", "amplitudePct": 12, "framesPerCycle": 90 }
+]
+},
+"type": {
+"families": [{ "id": "display", "family": "Inter", "source": "@remotion/google-fonts", "fallback": "system-ui",
+"axes": [{ "tag": "wght", "min": 100, "max": 900 }] }],
+"roles": [
+{ "role": "caption", "familyId": "display", "weight": 700, "sizePx": 44, "lineHeightPx": 52, "trackingEm": -0.01, "casing": "sentence", "numerals": "tabular" },
+{ "role": "captionActive", "familyId": "display", "weight": 700, "sizePx": 44, "lineHeightPx": 52, "trackingEm": -0.01, "casing": "sentence", "numerals": "tabular" }
+]
+},
+"motion": {
+"tone": "authoritative | punchy | measured | kinetic | playful",
+"aliases": { "ease-out": "out-cubic", "ease-in": "in-cubic", "ease-in-out": "in-out-cubic" },
+"curves": { "out-expo": [0.16, 1, 0.3, 1], "in-expo": [0.7, 0, 0.84, 0], "in-out-quart": [0.76, 0, 0.24, 1] },
+"springs": { "land": { "damping": 12, "stiffness": 180, "mass": 0.6 }, "snappy": { "damping": 20, "stiffness": 200, "mass": 0.6 } },
+"roles": { "entrance": "out-expo", "exit": "in-expo", "state": "in-out-quart", "camera": "in-out-quart", "cursor": "out-quart" },
+"choreography": {
+"exitRatio": 0.65,
+"staggerStepFrames": { "min": 2, "max": 6 },
+"staggerCapFrames": 20,
+"overlapPct": 65,
+"readHoldFramesPerWord": 10,
+"minHoldFrames": 24,
+"settleFrames": { "min": 8, "max": 24 },
+"overshootMaxPct": 12
+},
+"motionBlur": { "enabled": true, "component": "CameraMotionBlur", "shutterAngle": 180, "samples": 6, "appliesTo": ["whip", "scale", "push-in"] }
+},
+"captions": {
+"style": "cue | word-highlight | word-pop",
+"maxWordsPerPage": 4,
+"breakOnGapFrames": 9,
+"fadeFrames": 4,
+"activeColorRole": "accentPrimary",
+"scrim": { "colorRole": "background", "opacity": 0.7 },
+"safeZoneRef": "platform-specs.md#vertical-9-16",
+"wordTimingSource": "vo.json:lines[].words"
+},
+"camera": { "rig": true, "maxZoom": 1.25, "parallaxDepths": [-0.5, 0, 1, 2], "depthBlur": { "enabled": false, "blurPerDepthPx": 2, "maxBlurPx": 10 } },
+"rhythm": { "beatGrid": { "snapFrames": 2, "required": false }, "audioReactive": { "enabled": false, "smoothingFrames": 3 }, "maxStaticFrames": 45 },
+"surface": { "glass": { "enabled": false, "blurPx": 24, "tintOpacity": 0.12, "borderOpacity": 0.18 } },
+"texture": {
+"halftone": { "enabled": false, "cellPx": 6, "intensity": 0.2 },
+"paper": { "enabled": false, "intensity": 0.1 },
+"lightLeak": { "enabled": false, "intensity": 0.35 }
+},
+"layout": {
+"grid": { "columns": 12, "gutterPx": 24, "baselinePx": 8 },
+"focalPoint": "rule-of-thirds | center | golden",
+"aspectOverrides": [{ "aspect": "9:16", "marginPx": 48, "safeAreaPct": 10,
+"platformInsetsPx": { "top": 260, "bottom": 380, "left": 60, "right": 120 } }]
+},
+"uiMockup": {
+"cursor": { "curve": "out-quart", "path": "smoothed" },
+"smartZoom": { "enabled": true, "maxZoom": 1.6, "followLagFrames": 10, "transitionFrames": 18 },
+"typing": { "cadenceFrames": { "min": 2, "max": 4 }, "seed": "typing" }
+},
+"loop": { "enabled": false, "matchFrames": 6 }
+}
+
 ## Rules
 
 - style-tokens.json.frozen flips to true only on gate pass.
@@ -185,6 +261,13 @@ Two artifacts: styleframes.json (the frame set) and style-tokens.json (the froze
 - audio targets must match the platform spec table for the primary platform. If they differ, the platform spec wins.
 - uiMockup section is required when brief Q8 is C or D. It can be null when Q8 is A or B.
 - layout.aspectOverrides covers every aspect in the brief's platform set.
+- v2: every curve is `[x1, y1, x2, y2]` with x1 and x2 in 0..1; every motion role, alias target and listed easing resolves to a declared curve, `linear`, or `spring`.
+- v2: every spring has damping, stiffness and mass above zero, and overshoots no more than `choreography.overshootMaxPct`.
+- v2: `out-back`, the `bouncy` spring and the `bounce` easing exist only when `motion.tone` is playful.
+- v2: at most two type families; a `caption` role exists; `captions.style` is one of cue, word-highlight, word-pop.
+- v2: `layout.grid` is an object, and every aspect override carries `platformInsetsPx`.
+- v2: a file with `reapprovalRequired: true` is never `frozen: true`.
+- `ms-setup/validate-tokens.sh` enforces every v2 rule above before the gate is presented.
 
 ## styleframes.md template
 
@@ -210,7 +293,7 @@ boards: B01
 variants:
 F1-v1 palette-intensity high <preview path> selected
 F1-v2 palette-intensity low <preview path>
-tokens: palette.primary, type.hook, motion.medium, easing.ease-out
+tokens: palette.primary, type.hook, motion.medium, motion.roles.entrance
 
 F2 ...
 

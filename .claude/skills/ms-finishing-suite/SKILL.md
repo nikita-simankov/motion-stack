@@ -405,7 +405,7 @@ REFERENCES
 
 references/master-schema.md master.json schema and field definitions
 references/encode-profiles.md Codec, resolution, bitrate, container per aspect
-references/caption-pipeline.md Caption generation, burned, SRT, VTT
+references/caption-pipeline.md Caption generation, burned, SRT, VTT; cue, word-highlight and word-pop styles (v2)
 references/slate-and-metadata.md Slate generation and metadata pack
 references/loudness-delivery.md Loudness measurement and correction
 references/thumbnail-pipeline.md Auto-extraction and designed thumbnail

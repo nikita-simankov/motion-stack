@@ -73,6 +73,7 @@ A Clean editorial — type-led, restrained palette, generous negative space.
 B\* Brand-native — palette, type, motion locked to brand tokens.
 C Cinematic — depth, light, texture, grade-forward.
 D Graphic and kinetic — bold shapes, fast motion, high contrast.
+Q7 starts gate 6 from a look bundle: A editorial-clean, B brand-native, C cinematic-grain, D kinetic-graphic (also dark-product-ui with Q8 C/D and tactile-analog as variants). See ms-styleframe-designer/references/looks.md.
 E Other
 
 ## Q8 — UI mockup posture
@@ -154,7 +155,7 @@ E Other
 
 A\* Remotion standard — React components in Remotion. Animations via useCurrentFrame(). No CSS transitions or Tailwind animations. Local npx remotion render or @remotion/lambda.
 B Remotion Lambda priority — distributed rendering required. @remotion/lambda with memory optimization (3009MB = 3 vCPUs).
-C Remotion + Three.js — 3D content via <ThreeCanvas>. Higher render cost, higher visual impact.
+C Remotion + Three.js — 3D content via <ThreeCanvas>. Higher render cost, higher visual impact. Needs the Q17=C sub-spec (lighting, materials, camera, render budget; ms-asset-generator/references/asset-types.md).
 D Remotion + Lottie/Rive — vector animation assets as <Lottie> or <RemotionRiveCanvas>.
 E Other
 
@@ -168,7 +169,7 @@ E Other
 
 ## Q19 — Caption and localization (optional)
 
-A\* Burned-in + SRT — burned captions for silent autoplay, SRT sidecar. English only.
+A\* Burned-in + SRT — burned captions for silent autoplay, SRT sidecar. English only. Burned style follows tone: cue (authoritative, measured) or word-highlight / word-pop (punchy, kinetic, playful); word-level styles need word timings from the voiceover stage.
 B Burned-in + SRT + VTT — adds VTT for YouTube Shorts and web players.
 C Multi-language — SRT in 2-3 languages via ElevenLabs dubbing or manual translation. Burned captions in primary language.
 D Full localization — dub to 3+ languages via Dubbing v2, localized captions and metadata per language.

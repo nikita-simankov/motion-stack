@@ -13,6 +13,13 @@ CPT-xx Copy, hook, caption ms-social-distributor
 BRD-xx Voice, vocabulary, banned terms current stage
 VO-xx Voice synthesis quality, pacing, model ms-voiceover-producer
 RND-xx Remotion render failure, Lambda error ms-motion-designer or ms-video-editor
+TYP-xx Type hierarchy, kinetic type, readability ms-motion-designer
+CMP-xx Composition, focal point, grid, platform insets ms-motion-designer
+CAP-xx Caption timing, style, safe zone ms-finishing-suite
+STY-xx Style token drift, v2 sections defaulted ms-styleframe-designer
+ACC-xx Accessibility owning stage
+
+Full code list: ms-quality-assurance/references/defect-taxonomy.md.
 
 ## Rules
 

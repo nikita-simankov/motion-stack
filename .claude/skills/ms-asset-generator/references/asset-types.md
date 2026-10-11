@@ -115,6 +115,15 @@ Loader: <ThreeCanvas> from @remotion/three
 Produce when: brief Q17 includes Three.js
 Never produce otherwise
 
+Q17=C sub-spec (3D scenes), authored at stage 6 as part of the look and locked in the asset manifest:
+
+- Lighting: a key and a fill (and optional rim), each with colour from the palette, intensity and position
+- Materials: named materials with base colour from the palette, roughness and metalness; no texture outside the manifest
+- Camera: position, field of view, and the camera moves, driven by the `camera` role curve and `useCurrentFrame`
+- Render budget: max triangles, max texture size (KTX2), and a frame render-time ceiling checked by `/ms-motion-designer perf`
+- Determinism: no random seeds at render; animation clips advance by frame
+- A 3D scene is justified when the subject needs real rotation or lighting. Flat depth (layered parallax, depth blur) is the default (`camera-rig.md`)
+
 ## woff2
 
 Format: WOFF2

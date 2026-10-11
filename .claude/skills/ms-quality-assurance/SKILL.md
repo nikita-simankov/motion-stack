@@ -87,6 +87,9 @@ Hook strength (first 2s) high
 Pacing and retention curve high
 Brand voice fidelity high
 Visual coherence with style tokens high
+Motion craft (curves, stagger, overlap, settle, hold) high
+Hierarchy and composition high
+Distinctiveness high
 Audio mix and loudness high
 UI mockup fidelity and realism high (when Q8 is C or D)
 Remotion render integrity high
@@ -96,7 +99,7 @@ Platform nativeness medium
 Accessibility (contrast, captions, alt) medium
 Metadata and slate completeness low
 
-Score is out of 60 (12 criteria × 5). Weights influence the floor, not the raw score.
+Score is out of 75 (15 criteria × 5). Weights influence the floor, not the raw score.
 
 See references/review-rubric.md for anchors and pass thresholds.
 

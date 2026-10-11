@@ -14,6 +14,18 @@ Scene sequencing, cut order, duration math.
 5. Verify the sum of durations equals brief.runtime.frames.
 6. Emit the cut list.
 
+## Beat snap (v2)
+
+When `rhythm.beatGrid.required` is true, or the producer asks for a beat-synced cut, propose cut positions against the music grid after the music stem exists (stage 11):
+
+1. Read `music.json` for the stem and the cue's start on the master timeline.
+2. `beat_grid.py grid <stem> --fps <fps> --offset-ms <cue start>` writes `grid.json` (see `ms-music-supervisor/references/beat-grid.md`).
+3. `beat_grid.py snap --grid grid.json --cuts <cut frames> --snap-frames <rhythm.beatGrid.snapFrames>` proposes shifts of at most `snapFrames` frames.
+4. Accept a shift only when it keeps cut-on-action peaks and VO anchors intact (VO tolerance 1 frame). Record every decision, accepted or not, in `timeline.json` under `cut.beatSnap`.
+5. A cut that could not snap while `required` is true is CUT-15.
+
+Picture is locked only after this step is settled; a snap after picture lock is a rollback.
+
 ## Cut list
 
 Every cut between scene N and scene N+1 carries:

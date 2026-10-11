@@ -23,6 +23,7 @@ The pipeline is built on:
 - [Run artifacts](#run-artifacts)
 - [Credentials and secrets](#credentials-and-secrets)
 - [Technology rules](#technology-rules)
+- [Motion craft and token contract v2](#motion-craft-and-token-contract-v2)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -170,6 +171,8 @@ If you give no brief, `ms-command` runs the intake questionnaire first (see `.cl
 ```
 motion-stack/
 ├── README.md
+├── README_RU.md
+├── CHANGELOG.md
 ├── .gitignore
 └── .claude/
     └── skills/
@@ -180,7 +183,10 @@ motion-stack/
         │   ├── SKILL.md
         │   ├── questions.md     # the 10-question interview
         │   ├── setup.sh         # install, credentials, scaffold
-        │   └── verify.sh        # environment checks
+        │   ├── verify.sh        # environment checks and v2 tooling self-tests
+        │   ├── migrate-tokens.sh, validate-tokens.sh, tokens-v2-defaults.json
+        │   ├── audit-motion.sh, audit_motion.py
+        │   └── fixtures/        # v1 token sample, lint fixtures
         ├── ms-brand-voice/
         ├── ms-brief-intake/
         ├── ms-topic-research/
@@ -189,11 +195,11 @@ motion-stack/
         ├── ms-storyboard-artist/
         ├── ms-styleframe-designer/
         ├── ms-asset-generator/
-        ├── ms-motion-designer/
-        ├── ms-voiceover-producer/
+        ├── ms-motion-designer/     # + templates/motion (runtime), scripts/proof_sheet.py
+        ├── ms-voiceover-producer/  # + scripts/words_from_alignment.py
         ├── ms-sound-designer/
-        ├── ms-music-supervisor/
-        ├── ms-video-editor/
+        ├── ms-music-supervisor/    # + scripts/beat_grid.py
+        ├── ms-video-editor/        # + templates/transitions, scripts/loop_check.py
         ├── ms-color-grader/
         ├── ms-finishing-suite/
         ├── ms-quality-assurance/
@@ -234,6 +240,48 @@ These rules are fixed for every stage. The orchestrator enforces them at the gat
 
 Details live in `.claude/skills/ms-command/references/remotion-stack.md` and `elevenlabs-stack.md`.
 
+## Motion craft and token contract v2
+
+v2 raises the craft of the output, not just its compliance. v1 enforced that motion was frame-driven and token-bound; it did not say what good motion looks like. v2 adds that, as tokens a linter and the QA rubric can check.
+
+| Area | What v2 adds | Where |
+|---|---|---|
+| Motion | A named curve library (expo, quint, quart and friends), five curve roles chosen by tone, spring presets with a measured settle time and overshoot budget, and choreography rules: stagger, overlap, exit ratio, read hold | `ms-styleframe-designer/references/motion-curves.md` |
+| Kinetic type | Six presets (mask line, word rise, word lock-up, weight swell, outline fill, number roll), variable-font axes, a two-family limit | `kinetic-type.md` |
+| Captions | Word-level `word-highlight` and `word-pop` styles driven by ElevenLabs character timestamps converted to integer frames | `ms-finishing-suite/references/caption-pipeline.md` |
+| Camera and depth | A virtual camera, parallax layers, depth blur, a cursor-following smart zoom for product demos, token-driven motion blur | `ms-motion-designer/references/camera-rig.md` |
+| Looks and layout | Six look bundles mapped to intake Q7, a grid and focal-point system, mesh gradients, glass, halftone, paper, light leaks | `looks.md` |
+| Platform fit | Per-platform UI safe-zone insets for vertical video | `ms-command/references/platform-specs.md` |
+| Rhythm | A beat grid with cut snapping, audio-reactive visuals, a seamless-loop rule | `ms-music-supervisor/references/beat-grid.md`, `ms-video-editor/references/seamless-loop.md` |
+| QA | Three new high-weight rubric criteria (motion craft, hierarchy and composition, distinctiveness; the score is now out of 75) and new defect codes (ANIM-06 to ANIM-16, TYP, CMP, CAP, STY-05, CUT-15 to CUT-17) | `ms-quality-assurance/references/review-rubric.md` |
+
+### Tooling
+
+| Tool | Purpose |
+|---|---|
+| `ms-setup/migrate-tokens.sh` | Migrate a v1 `style-tokens.json` to v2 |
+| `ms-setup/validate-tokens.sh` | Check a v2 token file: curves, springs and overshoot, choreography ranges, tone rules, fonts, captions, layout |
+| `ms-setup/audit-motion.sh` | Motion lint over scene source (ANIM-01 to ANIM-16) |
+| `ms-motion-designer/scripts/proof_sheet.py` | Contact sheet and motion-energy plot; flags dead holds |
+| `ms-video-editor/scripts/loop_check.py` | Seam check for seamless loops |
+| `ms-voiceover-producer/scripts/words_from_alignment.py` | Character alignment to word frame timings |
+| `ms-music-supervisor/scripts/beat_grid.py` | Beat grid and cut snapping (needs the optional `librosa`) |
+| `ms-motion-designer/templates/motion/`, `ms-video-editor/templates/transitions/` | The motion runtime and transitions that `/ms-setup scaffold` copies into `src/` |
+
+`/ms-setup verify` self-tests every tool above.
+
+### Upgrading an existing project
+
+1. `/ms-setup upgrade`, then `/ms-setup scaffold`. This moves Remotion to 4.0.534 and React to 19, and writes `src/motion/` and `src/transitions/`. **React 19 is required:** `@remotion/transitions` 4.0.534 fails to bundle on React 18.3.1.
+2. `/ms-command migrate <project-id> [--tone <tone>]`. This writes a v2 token file next to the frozen v1 file and re-opens gate 6 with the diff. v1 values are never changed. Nothing is frozen until you approve.
+3. Scenes already built on v1 tokens stay valid. v1 easing names (`ease-out`, `ease-in`, `ease-in-out`) resolve through aliases.
+
+Full procedure: `ms-styleframe-designer/references/token-migration-v1-to-v2.md`. Breaking changes are in `CHANGELOG.md`.
+
+### What has and has not been verified
+
+Verified in a scratch project: every runtime template typechecks against Remotion 4.0.534 and renders in Chromium, with identical frames across repeated renders; the whip, shape-wipe and iris transitions render; the migration, validator, lint, proof sheet, loop checker, word-timing converter and beat grid pass their self-tests (the validator against 19 negative cases). Not verified: a full 17-stage run (it needs a live ElevenLabs connection and Claude sessions per stage), the `with-timestamps` call against the live API, and the platform safe-zone figures, which come from third-party measurements. The look bundles, pacing ranges and choreography defaults are starting calibrations; `trend-benchmarks.md` has a log for replacing them with measured values.
+
 ## Troubleshooting
 
 | Symptom | Fix |
@@ -243,6 +291,10 @@ Details live in `.claude/skills/ms-command/references/remotion-stack.md` and `el
 | ElevenLabs not resolved | Connect its MCP server, or run `/ms-setup creds --api-key-only`. |
 | A stage keeps failing brand-voice checks | Read the banned-term hits in `ms-brand-voice/references/banned-terms.md` and revise with notes. |
 | Lost run state | `/ms-command status <project-id>`. Runs are persisted to `runs/<id>/`. |
+| Bundling fails with `__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE ... was not found in 'react'` | The project is on React 18. Run `/ms-setup upgrade` (React 19 is required by `@remotion/transitions` 4.0.534). |
+| `verify` warns that a token file is tokenVersion 1 | It is read-compatible. Run `/ms-command migrate <project-id>` to author the v2 sections. |
+| `audit-motion.sh` reports ANIM-06 on a progress bar | Continuous motion is allowed: mark it `// ms:linear`. |
+| Beat-grid snapping is unavailable | `librosa` is optional and failed to install. Keep `rhythm.beatGrid.required: false`, or install it in `.venv`. |
 
 ---
 

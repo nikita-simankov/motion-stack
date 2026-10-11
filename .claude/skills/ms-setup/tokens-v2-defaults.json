@@ -1,0 +1,86 @@
+{
+  "tokenVersion": 2,
+  "palette": {
+    "gradients": []
+  },
+  "motion": {
+    "tone": "punchy",
+    "aliases": {
+      "ease-out": "out-cubic",
+      "ease-in": "in-cubic",
+      "ease-in-out": "in-out-cubic"
+    },
+    "curves": {
+      "out-cubic": [0.33, 1, 0.68, 1],
+      "in-cubic": [0.32, 0, 0.67, 0],
+      "in-out-cubic": [0.65, 0, 0.35, 1],
+      "out-quart": [0.25, 1, 0.5, 1],
+      "out-quint": [0.22, 1, 0.36, 1],
+      "out-expo": [0.16, 1, 0.3, 1],
+      "in-expo": [0.7, 0, 0.84, 0],
+      "in-out-quart": [0.76, 0, 0.24, 1],
+      "in-out-expo": [0.87, 0, 0.13, 1]
+    },
+    "springs": {
+      "land": { "damping": 12, "stiffness": 180, "mass": 0.6 },
+      "snappy": { "damping": 20, "stiffness": 200, "mass": 0.6 },
+      "soft": { "damping": 18, "stiffness": 90, "mass": 1 },
+      "heavy": { "damping": 26, "stiffness": 140, "mass": 1.4 }
+    },
+    "roles": {
+      "entrance": "out-expo",
+      "exit": "in-cubic",
+      "state": "in-out-quart",
+      "camera": "in-out-quart",
+      "cursor": "out-quart"
+    },
+    "choreography": {
+      "exitRatio": 0.65,
+      "staggerStepFrames": { "min": 2, "max": 6 },
+      "staggerCapFrames": 20,
+      "overlapPct": 65,
+      "readHoldFramesPerWord": 10,
+      "minHoldFrames": 24,
+      "settleFrames": { "min": 8, "max": 24 },
+      "overshootMaxPct": 12
+    },
+    "motionBlur": {
+      "enabled": true,
+      "component": "CameraMotionBlur",
+      "shutterAngle": 180,
+      "samples": 6,
+      "appliesTo": ["whip", "scale", "push-in"]
+    }
+  },
+  "captions": {
+    "style": "word-highlight",
+    "maxWordsPerPage": 4,
+    "breakOnGapFrames": 9,
+    "fadeFrames": 4,
+    "activeColorRole": "accentPrimary",
+    "scrim": { "colorRole": "background", "opacity": 0.7 },
+    "safeZoneRef": "platform-specs.md#vertical-9-16",
+    "wordTimingSource": "vo.json:lines[].words"
+  },
+  "camera": {
+    "rig": true,
+    "maxZoom": 1.25,
+    "parallaxDepths": [-0.5, 0, 1, 2],
+    "depthBlur": { "enabled": false, "blurPerDepthPx": 2, "maxBlurPx": 10 }
+  },
+  "rhythm": {
+    "beatGrid": { "snapFrames": 2, "required": false },
+    "audioReactive": { "enabled": false, "smoothingFrames": 3 },
+    "maxStaticFrames": 45
+  },
+  "texture": {
+    "halftone": { "enabled": false, "cellPx": 6, "intensity": 0.2 },
+    "paper": { "enabled": false, "intensity": 0.1 },
+    "lightLeak": { "enabled": false, "intensity": 0.35 }
+  },
+  "layout": {
+    "focalPoint": "rule-of-thirds"
+  },
+  "loop": { "enabled": false, "matchFrames": 6 },
+  "look": { "bundleId": null, "source": "migrated" }
+}

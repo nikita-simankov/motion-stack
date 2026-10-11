@@ -26,7 +26,24 @@ Texture and grade are locked here so the grade stage has a spec, not a guess.
 - intensity 0-1 (default 0.15)
 - radiusPct (default 70)
 
-Texture is applied at stage 13. Tokens are the target.
+### halftone (v2)
+
+- enabled true|false (default false)
+- cellPx (default 6)
+- intensity 0-1 (default 0.2)
+
+### paper (v2)
+
+- enabled true|false (default false)
+- intensity 0-1 (default 0.1)
+
+### lightLeak (v2)
+
+- enabled true|false (default false)
+- intensity 0-1 (default 0.35)
+- Source: `lightLeak()` from `@remotion/effects`. The `@remotion/light-leaks` package is deprecated and not added. Verify the import path against the pinned Remotion version.
+
+Texture is applied at stage 13. Tokens are the target. New textures run in the texture step, before grade.
 
 ## Grade tokens
 

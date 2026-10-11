@@ -97,6 +97,15 @@ Every role carries:
 - Casing: title
 - Numerals: tabular
 
+## v2 additions
+
+- Maximum two families per piece.
+- Variable families declare `axes` (`[{ "tag": "wght", "min": 100, "max": 900 }]`). Axis animation (`weight-swell`) stays inside the declared range.
+- New roles: `caption` and `captionActive` (word-level captions; size 40-56px at 1080p, weight 600-700, tracking -0.01 em, sentence case, tabular numerals; `captionActive` differs only in colour or scale), and optional `display` (expressive, oversized; never reading text).
+- Kinetic type uses the preset library, not per-project animation (`kinetic-type.md`).
+- Fit text to its box with `fitText()` from `@remotion/layout-utils` after the font is loaded; never rely on browser auto-wrap.
+- One focal text element per beat; when two blocks enter together, one is at least 1.5x the other.
+
 ## Rendering rules
 
 - All type is rendered via Remotion components, not CSS text in HTML

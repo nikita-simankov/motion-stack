@@ -13,12 +13,24 @@ How to review each artifact type.
 - Check the final frame: is the last beat intentional?
 - Watch once at 25% scale to simulate a phone screen
 
+## Motion
+
+- Read `audit-motion.sh --json` output for the scenes; errors are defects with their ANIM codes
+- Open the motion proof sheet (`ms-motion-designer/scripts/proof_sheet.py`): the contact sheet shows beat order and hierarchy, the energy plot shows rhythm
+- Dead holds above `rhythm.maxStaticFrames` are ANIM-14, unless the beat is an `isolated` framing in the boards
+- A flat plateau on a move that should ease is ANIM-06 in the rendered result
+- Sample three text blocks and count frames on screen against `max(minHoldFrames, words x readHoldFramesPerWord)` (ANIM-08)
+- Watch once with sound off: the hook and the story must read from picture and captions alone
+- Watch once at 25% scale: one focal element per beat (CMP-01), readable content inside the platform insets (CMP-03)
+- Compare against `ms-styleframe-designer/references/trend-benchmarks.md`; a value outside a range is a question for the designer, not a defect on its own
+
 ## Captions
 
 - Read the SRT end to end
 - Compare against script.json line by line
 - Verify cps per cue
-- Verify every cue is within safe area
+- Verify every cue is within safe area and the platform insets (`platform-specs.md`)
+- For word-level styles, verify word frames against `vo.json` words (CAP-01), page size (CAP-04) and the style token (CAP-03)
 - Verify the burned captions match the SRT text
 - Verify no caption overlaps a UI element
 

@@ -41,7 +41,8 @@ INVOCATION
 /ms-motion-designer preview <scene-id> Render a preview for review
 /ms-motion-designer preview-all <project-id> Render previews for every scene
 /ms-motion-designer register <project-id> Register all compositions in Root.tsx
-/ms-motion-designer audit <project-id> Verify compositions against boards and tokens
+/ms-motion-designer audit <project-id> Verify compositions against boards and tokens (runs the motion lint)
+/ms-motion-designer proofsheet <scene-id> Render the motion proof sheet (contact sheet and energy plot)
 /ms-motion-designer perf <project-id> Report render-time and bundle-size metrics
 
 Dispatched by ms-command as stage 8. Never invoked by ms-command mid-pipeline.
@@ -64,10 +65,10 @@ WORKFLOW
 2. Verify every board has a matching asset set and a style frame family. Any gap is a blocker to stage 6 or 7, not a workaround here.
 3. For each board, produce one Remotion composition file.
 4. Register every composition in src/Root.tsx via <Composition> with explicit id, width, height, fps, durationInFrames, and component.
-5. Implement motion notes as interpolate() or spring() calls. No CSS transitions. No Tailwind animation classes. No CSS keyframes.
+5. Implement motion notes through the token runtime (src/motion: useMotion().tween, springOf, staggerOffset). Curves and springs come from tokens; none are typed into a scene. No CSS transitions. No Tailwind animation classes. No CSS keyframes. Kinetic type uses the preset library; camera moves use CameraRig.
 6. Implement UI mockups as Remotion React components with frame-driven state via useCurrentFrame.
 7. Implement transitions via <TransitionSeries> or <Sequence> boundaries per the board pairs.
-8. Verify each scene renders locally at --preview-scale and --preview-fps. Save previews to runs/<project-id>/previews/.
+8. Verify each scene renders locally at --preview-scale and --preview-fps. Save previews to runs/<project-id>/previews/. Run ms-setup/audit-motion.sh on the scenes (zero errors) and render the motion proof sheet.
 9. Verify determinism: re-render one scene twice, diff the outputs.
 10. Verify performance: report render-time per scene, estimated total render time, and bundle-size impact.
 11. Compile scene manifest to runs/<project-id>/scenes.json and runs/<project-id>/scenes.md.
@@ -102,8 +103,11 @@ ANIMATION RULES
 - CSS transitions, CSS animations, and Tailwind animation classes are FORBIDDEN.
 - Timing is expressed in frames. Seconds appear only in comments.
 - Frame math: seconds \* fps. At 30fps, 1s = 30 frames.
-- interpolate() for linear and eased motion.
-- spring() for landing moments: CTA, success state, focus.
+- Tokens first: curves, springs, stagger, overlap and hold come from useMotion() (src/motion). The scene never imports Easing or inlines a spring config.
+- interpolate() always has a named easing, except continuous motion marked // ms:linear.
+- spring() through a named preset, for landing moments: CTA, success state, focus.
+- Groups of three or more stagger. A scene with six or more eased motions uses at least two curves.
+- Text holds long enough to read; exits are about 65% of their entrances.
 - <Sequence> for timing, never for motion.
 - <Series> for sequential non-overlapping elements.
 - <AbsoluteFill> for full-canvas layers.
@@ -121,6 +125,10 @@ Rejected patterns (each is an ANIM-xx defect at QA):
 - requestAnimationFrame
 - Math.random without a fixed seed
 - Date.now() at render time
+- interpolate() with no easing; raw Easing.* in a scene; an inline spring config
+- A group of three or more animated with no stagger; one curve on everything
+
+The motion lint (ms-setup/audit-motion.sh, rules in references/motion-lint.md) checks these.
 
 See references/animation-patterns.md for the canonical patterns.
 
@@ -153,7 +161,8 @@ Board-to-board transitions use <TransitionSeries>:
 - dissolve — TransitionSeries with a dissolve presentation
 - glitch — TransitionSeries with a custom glitch presentation
 - scale — TransitionSeries with a scale presentation
-- whip — TransitionSeries with a directional blur presentation
+- whip — TransitionSeries with the token-driven whip presentation (src/transitions/whip.tsx, motion blur from tokens)
+- shape-wipe, iris, object-wipe, morph — v2 vocabulary (see ms-video-editor/references/transition-application.md)
 
 Rules:
 
@@ -307,3 +316,5 @@ references/scene-render.md Local render, preview render, still render
 references/lambda-render.md Lambda setup, chunk sizing, concurrency, audio concat
 references/scene-qa.md Determinism, perf, and scene-level QA checklist
 references/motion-protocol.md Scene, rebuild, preview, register, audit, rollback
+references/camera-rig.md Motion runtime, CameraRig, parallax, smart zoom, depth (v2)
+references/motion-lint.md Motion lint rules, codes, suppression, fixtures (v2)

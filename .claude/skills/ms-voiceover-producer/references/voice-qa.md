@@ -29,6 +29,7 @@ Condition: spectral comparison to prior lines exceeds a defined distance
 Fix: check that model_id, voice_id, and voice_settings are unchanged; regenerate
 
 VO-07 Alignment off by >1 frame
+VO-09 Word timings required but missing, overlapping, outside the line, or not integer frames
 Condition: rendered start or end frame differs from script frame anchor by more than 1
 Fix: re-align the line; if the line is at the correct duration but off by a consistent offset, adjust the start sample
 

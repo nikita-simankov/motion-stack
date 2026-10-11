@@ -299,6 +299,7 @@ references/master-composition.md Master.tsx pattern, registration, audio placeme
 references/cut-assembly.md Scene sequencing, cut order, duration math
 references/audio-alignment.md Placing VO, SFX, and music stems, stem summing
 references/transition-application.md Transition implementation per type
+references/seamless-loop.md Loop rule, seam check, loop defect codes (v2)
 references/picture-lock.md Freeze procedure, hash, downstream freeze
 references/edit-qa.md Edit QA checklist, codes, thresholds
 references/edit-protocol.md Scene, recut, retime, align-audio, preview, lock, audit

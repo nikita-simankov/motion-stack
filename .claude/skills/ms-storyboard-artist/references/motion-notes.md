@@ -9,9 +9,16 @@ For every animated element:
 - element — the name of the element (a layer, a component, a text block)
 - from — starting state (position, scale, rotation, opacity, color, shape, value)
 - to — ending state
-- easing — linear | ease-in | ease-out | ease-in-out | spring | bounce | null
+- easing — a motion role (entrance | exit | state | camera | cursor), a named curve from the token set (out-expo, in-out-quart, ...), a v1 name (ease-out, ease-in, ease-in-out), linear, spring, or null
+- springPreset — land | snappy | soft | heavy, only when easing is spring
 - frameAnchorStart, frameAnchorEnd — the frames between which the motion runs
 - remotionPrimitive — interpolate | spring | Sequence | AbsoluteFill | Series | custom
+
+Optional, for groups and text (v2):
+
+- staggerFrames — frames between items of a group (2 to 6; total at most 20)
+- overlapWith — the element whose motion this one overlaps (starts at 65% of its progress)
+- holdFrames — frames the element rests after it settles (text: at least 10 per word, minimum 24)
 
 ## Example: push-in on the hook number
 
@@ -31,6 +38,17 @@ to: opacity 1.0, x 0
 easing: ease-out
 frameAnchorStart: 180
 frameAnchorEnd: 210
+remotionPrimitive: interpolate
+
+## Example: staggered list entrance (v2)
+
+element: list items 1-4
+from: opacity 0.0, y +24
+to: opacity 1.0, y 0
+easing: entrance
+staggerFrames: 4
+frameAnchorStart: 180
+frameAnchorEnd: 204
 remotionPrimitive: interpolate
 
 ## Example: UI cursor click
@@ -62,6 +80,9 @@ remotionPrimitive: spring
 
 ## Rejected phrasings
 
+- "all four items fade in" — a group without stagger or a reason
+- "springs in" — no preset
+- "ease out" — ambiguous between the v1 alias and a v2 curve; name a role or a curve
 - "fade in" — no start state, no end state, no easing, no frame range
 - "slides up" — no frame range, no easing
 - "animates in via CSS" — CSS is forbidden

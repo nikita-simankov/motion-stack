@@ -36,6 +36,10 @@ Pre-roll and tail by cue type:
 - transition — preRoll 12 frames, tail 12 frames
 - stinger — preRoll 12 frames, tail 45 frames
 
+## Beat grid (v2)
+
+Extract the beat grid from the finished music stem with `scripts/beat_grid.py` and hand `grid.json` to the editor for cut snapping. Beat positions are reliable; the BPM figure is approximate (octave errors happen), so tempo mapping below uses measured beat positions where it matters. Details and the audio-reactive rules: `beat-grid.md`.
+
 ## Tempo mapping
 
 If the cue has a tempo and the boards have a rhythm, align them.
