@@ -316,6 +316,7 @@ references/voiceover-schema.md vo.json schema and field definitions
 references/elevenlabs-integration.md API setup, endpoint calls, auth, retries, rate limits
 references/voice-selection.md Pre-made voices, Instant Voice Cloning, consent
 references/line-generation.md Per-line generation procedure, parameters, retries
+scripts/words_from_alignment.py Character alignment to word frame timings (v2; see line-generation.md, Word timings)
 references/audio-processing.md Trimming, normalization, fades, concatenation
 references/dubbing-and-localization.md Dubbing v2 flow, language codes, alignment
 references/voice-qa.md VO-xx codes, checks, and thresholds

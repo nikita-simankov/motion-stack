@@ -49,11 +49,20 @@ Triggered by /ms-motion-designer audit.
 1. Walk every board and every scene.
 2. Verify one-to-one mapping.
 3. Verify every motion note in boards.json maps to a Remotion primitive in the scene source.
-4. Verify no CSS transitions or Tailwind animation classes anywhere in src/.
+4. Run `ms-setup/audit-motion.sh src/scenes --tokens runs/<id>/style-tokens.json --json`. Any error blocks the audit; every warning is listed (see `motion-lint.md`). This replaces the manual CSS and Tailwind scan.
 5. Verify every asset used exists in assets.json.
 6. Verify every token used exists in style-tokens.json.
 7. Verify determinism by re-rendering one scene twice.
 8. Emit an audit diff: scenes unchanged, changed, added, removed.
+
+## Proof sheet
+
+Triggered by /ms-motion-designer proofsheet <scene-id>.
+
+1. Render stills every 3 frames at --preview-scale into runs/<id>/previews/<scene-id>-sheet/.
+2. Build a contact sheet (ffmpeg tile) and a velocity plot for each hero element (position delta per frame).
+3. Save both next to the preview. The plot makes a linear move, a missing settle, or a dead hold visible at a glance.
+4. Attach the paths to scenes.json.
 
 ## Perf
 

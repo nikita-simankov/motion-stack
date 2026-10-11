@@ -12,7 +12,8 @@ MIN_NPM_MAJOR=10
 MIN_PY_MAJOR=3
 MIN_PY_MINOR=10
 
-STUDIO_DIR="${STUDIO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
+SKILLS_DIR="$(cd "$(dirname "$0")/.." && pwd)"   # where ms-* skills (and their templates) live
+STUDIO_DIR="${STUDIO_DIR:-$SKILLS_DIR}"
 STUDIO_CONFIG="$STUDIO_DIR/runs/_studio.json"
 MCP_CONFIG="$STUDIO_DIR/runs/_mcp.json"
 CLIENT_DIR="$STUDIO_DIR/runs/_clients"
@@ -73,9 +74,11 @@ detect_os() {
     *) OS="unknown"; PKG="" ;;
   esac
   log "OS detected: $OS (pkg: ${PKG:-none})"
-  [ "$OS" = "unknown" ] && fail "unsupported OS"
-  [ "$OS" = "windows" ] && fail "use WSL2"
-  [ "$OS" = "linux-unknown" ] && fail "unsupported Linux distribution"
+  # `[ ] && fail` returns 1 when the test is false; as the last command of the function that
+  # tripped `set -e` on every supported OS. Use explicit ifs.
+  if [ "$OS" = "unknown" ]; then fail "unsupported OS"; fi
+  if [ "$OS" = "windows" ]; then fail "use WSL2"; fi
+  if [ "$OS" = "linux-unknown" ]; then fail "unsupported Linux distribution"; fi
 }
 
 # ---------------------------------------------------------------------------
@@ -254,20 +257,45 @@ ensure_node() {
 install_npm_packages() {
   cd "$STUDIO_DIR"
   [ -f package.json ] || run npm init -y >/dev/null
+  # Token contract v2 pins. Remotion packages must all share one version.
+  # React 19 is required: @remotion/transitions 4.0.534 references React 19 internals
+  # (the 18.3.1 bundle fails with "export __CLIENT_INTERNALS... was not found in 'react'").
   run npm install --save-exact \
-    remotion@4.0.130 @remotion/cli@4.0.130 @remotion/lambda@4.0.130 \
-    @remotion/transitions@4.0.130 @remotion/lottie@4.0.130 \
-    @remotion/rive@4.0.130 @remotion/three@4.0.130 \
-    @remotion/google-fonts@4.0.130 @remotion/web-renderer@4.0.130 \
-    react@18.3.1 react-dom@18.3.1 typescript@5.5.4 \
-    @types/react@18.3.5 @types/node@20.16.5
+    remotion@4.0.534 @remotion/cli@4.0.534 @remotion/lambda@4.0.534 \
+    @remotion/transitions@4.0.534 @remotion/lottie@4.0.534 \
+    @remotion/rive@4.0.534 @remotion/three@4.0.534 \
+    @remotion/google-fonts@4.0.534 @remotion/web-renderer@4.0.534 \
+    @remotion/motion-blur@4.0.534 @remotion/captions@4.0.534 \
+    @remotion/layout-utils@4.0.534 @remotion/noise@4.0.534 \
+    @remotion/paths@4.0.534 @remotion/shapes@4.0.534 \
+    @remotion/media-utils@4.0.534 \
+    react@19.1.0 react-dom@19.1.0 typescript@5.6.3 \
+    @types/react@19.1.8 @types/react-dom@19.1.6 @types/node@20.16.5
 }
 
 install_python_packages() {
   cd "$STUDIO_DIR"
   [ -d .venv ] || run python3 -m venv .venv
   run ./.venv/bin/pip install --upgrade pip
-  run ./.venv/bin/pip install "elevenlabs>=1.0"
+  run ./.venv/bin/pip install "elevenlabs>=1.0" "numpy>=1.26"   # numpy: motion proof sheet
+  # Optional: beat grid for cut-to-music sync (ms-music-supervisor/scripts/beat_grid.py).
+  # A failure here is a warning, not a setup failure.
+  run ./.venv/bin/pip install "librosa>=0.10" "soundfile>=0.12" || warn "librosa not installed; beat-grid snapping unavailable (rhythm.beatGrid.required must stay false)"
+}
+
+# Copy the motion runtime and transition templates into the project. These files are owned by
+# the skills, not the project: they are overwritten on every scaffold so every run uses the same runtime.
+scaffold_motion_runtime() {
+  local src_motion="$SKILLS_DIR/ms-motion-designer/templates/motion"
+  local src_trans="$SKILLS_DIR/ms-video-editor/templates/transitions"
+  [ -d "$src_motion" ] || { warn "motion templates not found at $src_motion"; return 0; }
+  mkdir -p "$STUDIO_DIR/src/motion" "$STUDIO_DIR/src/transitions"
+  run cp "$src_motion"/*.ts "$src_motion"/*.tsx "$STUDIO_DIR/src/motion/"
+  if [ -d "$src_trans" ]; then
+    run cp "$src_trans/whip.tsx" "$src_trans/shapeWipe.tsx" "$STUDIO_DIR/src/transitions/"
+    [ -f "$STUDIO_DIR/src/transitions/index.ts" ] || run cp "$src_trans/index.ts" "$STUDIO_DIR/src/transitions/index.ts"
+  fi
+  printf '2\n' > "$STUDIO_DIR/src/motion/.runtime-version"
 }
 
 install_aws() {
@@ -389,8 +417,9 @@ interview() {
 
 scaffold() {
   cd "$STUDIO_DIR"
-  mkdir -p skills runs/_clients runs/_sfx/{impacts,transitions,ui,ambient,accents,risers,stingers,synthesized} runs/_luts runs/_studio src/{scenes,transitions,grade,thumbnails} public out
+  mkdir -p skills runs/_clients runs/_sfx/{impacts,transitions,ui,ambient,accents,risers,stingers,synthesized} runs/_luts runs/_studio src/{scenes,transitions,grade,thumbnails,motion} public out
   for d in skills runs/_clients runs/_sfx runs/_luts runs/_studio src/scenes src/transitions src/grade src/thumbnails public; do [ -f "$d/.gitkeep" ] || touch "$d/.gitkeep"; done
+  scaffold_motion_runtime
   [ -f src/Root.tsx ] || cat > src/Root.tsx <<'EOF'
 import { Composition } from "remotion";
 export const RemotionRoot: React.FC = () => (<></>);

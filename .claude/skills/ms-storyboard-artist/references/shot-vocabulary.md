@@ -96,6 +96,29 @@ Following a moving subject.
 Remotion: translateX/Y derived from the subject's position, not a fixed value.
 Use for: cursor follows, character follows, object follows.
 
+### rack-focus (v2)
+
+Focus shifts between layers: one layer sharpens while another blurs.
+Remotion: `CameraRig` with `focusDepth` animated between two depths; layers carry depth blur.
+Use for: shifting attention between a subject and a detail, UI depth.
+
+### orbit (v2)
+
+Camera rotates around a subject. Needs real 3D (`<ThreeCanvas>`, intake Q17=C); do not fake it with a flat rotate.
+Use for: product beats, hero objects.
+
+### scale-through (v2)
+
+Camera pushes through a surface or aperture into the next scene.
+Remotion: zoom beyond the normal limit on the `camera` curve with `<MotionBlur>`, ending on a hole or mask that becomes the next scene.
+Use for: scene changes that feel like one continuous move.
+
+### smart-zoom (v2)
+
+Camera follows the cursor into a control and back out to the result.
+Remotion: `SmartZoom` with `zoomSegments`.
+Use for: product demos, step-by-step UI.
+
 ### static
 
 No camera move. Internal motion only.
@@ -155,8 +178,32 @@ Use for: "zoom into the detail" transitions.
 ### whip
 
 Fast directional blur.
-Remotion: heavy directional blur on a large translate, timed short (<= 6 frames).
+Remotion: a large translate on the `in-out-expo` curve with `<MotionBlur>` (token-driven shutter and samples), 6 to 12 frames.
 Use for: high-energy pace, reel-style cuts.
+
+### shape-wipe (v2)
+
+The next frame is revealed through a growing shape.
+Remotion: shape mask from `@remotion/shapes`, scaled on the `state` curve. See `transition-application.md`.
+Use for: brand-forward scene changes.
+
+### iris (v2)
+
+Circular focus-in to the next frame.
+Remotion: `iris()` presentation in `<TransitionSeries>`.
+Use for: focusing on a subject.
+
+### object-wipe (v2)
+
+A foreground object carries the reveal.
+Remotion: shared layer across the cut, moved on the `camera` curve with `<MotionBlur>`.
+Use for: continuous-feeling sequences, product reveals.
+
+### morph (v2) (transition)
+
+One shape becomes another across the cut.
+Remotion: `interpolatePath` over matched paths.
+Use for: transformation beats.
 
 ## Rejected vocabulary
 

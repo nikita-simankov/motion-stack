@@ -126,6 +126,47 @@ Rules:
 - Close via reverse
 - No CSS transitions
 
+## SmartZoom (v2)
+
+Props:
+
+- width, height
+- cursorPath — array of { frame, x, y } (shared with Cursor)
+- zoomSegments — array of { startFrame, endFrame, zoom }
+- followLagFrames, transitionFrames
+
+Rules:
+
+- Wraps the DeviceFrame content; implemented in `src/motion/SmartZoom.tsx`
+- Camera curve from the `camera` role, cursor legs from the `cursor` role
+- Focus is clamped so the zoomed view never shows outside the canvas
+- No zoom while the cursor is idle
+
+## TypingText (v2)
+
+Props:
+
+- text, startFrame
+- cadence — { min, max } frames per character from `uiMockup.typing`
+- seed — string from `uiMockup.typing.seed`
+
+Rules:
+
+- Character arrival frames come from a seeded generator, never `Math.random`
+- Caret blink is frame-driven (a modulo on the frame), not a CSS animation
+
+## Skeleton (v2)
+
+Props:
+
+- startFrame, endFrame
+- shape — line | block | avatar
+
+Rules:
+
+- Placeholder shimmer is a frame-driven gradient position, linear on purpose (`// ms:linear`)
+- Replaced by real content on the state-change frame; the swap uses the `state` curve crossfade
+
 ## Chart components
 
 Any chart is a Remotion component:

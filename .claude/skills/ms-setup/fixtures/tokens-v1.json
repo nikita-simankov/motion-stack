@@ -1,0 +1,78 @@
+{
+  "projectId": "fixture-001",
+  "frozenAt": "2026-09-01T10:00:00Z",
+  "frozenBy": "producer",
+  "frozen": true,
+  "palette": {
+    "background": "#0A0A0A",
+    "surface": "#141414",
+    "textPrimary": "#F5F5F5",
+    "textSecondary": "#A3A3A3",
+    "textInverse": "#0A0A0A",
+    "accentPrimary": "#3B82F6",
+    "accentSecondary": "#F59E0B",
+    "stateSuccess": "#10B981",
+    "stateWarning": "#F59E0B",
+    "stateError": "#EF4444",
+    "stateInfo": "#3B82F6",
+    "gradientStops": [
+      { "position": 0.0, "hex": "#0A0A0A" },
+      { "position": 1.0, "hex": "#1E1E1E" }
+    ]
+  },
+  "type": {
+    "families": [
+      { "id": "display", "family": "Inter", "source": "@remotion/google-fonts", "fallback": "system-ui" },
+      { "id": "mono", "family": "JetBrains Mono", "source": "@remotion/google-fonts", "fallback": "ui-monospace" }
+    ],
+    "roles": [
+      { "role": "hook", "familyId": "display", "weight": 700, "sizePx": 96, "lineHeightPx": 100, "trackingEm": -0.02, "casing": "sentence", "numerals": "tabular" },
+      { "role": "onScreenText", "familyId": "display", "weight": 600, "sizePx": 48, "lineHeightPx": 56, "trackingEm": -0.01, "casing": "sentence", "numerals": "tabular" }
+    ]
+  },
+  "motion": {
+    "buckets": [
+      { "name": "micro", "minFrames": 6, "maxFrames": 12 },
+      { "name": "short", "minFrames": 12, "maxFrames": 24 },
+      { "name": "medium", "minFrames": 24, "maxFrames": 45 },
+      { "name": "long", "minFrames": 45, "maxFrames": 90 }
+    ],
+    "easings": ["linear", "ease-out", "ease-in", "ease-in-out", "spring"],
+    "transitionSet": ["hard-cut", "cut-on-action", "wipe", "dissolve", "whip"]
+  },
+  "texture": {
+    "grain": { "intensity": 0.08, "animated": true, "blendMode": "overlay" },
+    "halation": { "threshold": 200, "radiusPx": 4, "intensity": 0.25 },
+    "chromaticAberration": { "offsetPx": 1, "mode": "radial" },
+    "vignette": { "intensity": 0.15, "radiusPct": 70 }
+  },
+  "grade": {
+    "targetGamma": "sRGB",
+    "targetGamut": "Rec.709",
+    "lutId": null,
+    "contrastCurve": [
+      { "in": 0.0, "out": 0.0 }, { "in": 0.25, "out": 0.22 }, { "in": 0.75, "out": 0.78 }, { "in": 1.0, "out": 1.0 }
+    ],
+    "blackPoint": 0,
+    "whitePoint": 255,
+    "highlightRolloff": "soft"
+  },
+  "audio": { "integratedLUFS": -14, "truePeakDBTP": -1, "voLUFS": -16, "musicDuckLUFS": -18, "sfxLUFS": -20, "fadeInFrames": 6, "fadeOutFrames": 12 },
+  "uiMockup": {
+    "device": { "widthPx": 1080, "heightPx": 2340, "cornerRadiusPx": 48, "bezelPx": 12, "shadow": "0 24px 60px rgba(0,0,0,0.45)" },
+    "states": ["default", "hover", "active", "loading", "success", "error", "disabled"],
+    "cursor": { "sizePx": 24, "shape": "arrow", "blendMode": "normal", "easing": "ease-in-out" },
+    "spacingBasePx": 8
+  },
+  "layout": {
+    "grid": "12-column",
+    "marginPx": 64,
+    "safeAreaPct": 8,
+    "aspectOverrides": [
+      { "aspect": "9:16", "marginPx": 48, "safeAreaPct": 10 },
+      { "aspect": "1:1", "marginPx": 56, "safeAreaPct": 9 }
+    ]
+  },
+  "iconography": { "strokePx": 2, "cornerRadiusPx": 4, "fillRule": "outline", "sizeScalePx": [16, 24, 32, 48] },
+  "imagery": { "treatment": "none", "overlayHex": "#0A0A0A", "overlayOpacity": 0.4, "cropRule": "center" }
+}

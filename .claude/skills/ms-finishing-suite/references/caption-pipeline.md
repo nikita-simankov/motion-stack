@@ -14,6 +14,18 @@ Per caption cue:
 - characterCount
 - cps (characters per second) = characterCount / (durationFrames / fps)
 
+## Styles (token contract v2)
+
+`style-tokens.captions.style` selects one of three styles. The text is always the script text.
+
+- cue — the whole cue appears at once. Authoritative and measured tone, and the sidecar files in every case.
+- word-highlight — words appear grouped in pages of at most `captions.maxWordsPerPage` (4 by default). Spoken words are full strength, the current word takes the `captionActive` role (the accent colour), upcoming words are dimmed.
+- word-pop — as word-highlight, and each word scales 0.9 to 1.0 over 5 frames as it is spoken. Playful tone.
+
+Word-level styles read `vo.json` `lines[].words` (integer frames; see `ms-voiceover-producer/references/line-generation.md`). Pages break when a word ends a sentence, when the page is full, or when the gap to the next word is at least `captions.breakOnGapFrames` (9). Implementation: `WordCaptions` and `pageWords` in `src/motion/WordCaptions.tsx`; paging is computed in frames so cues land exactly on the VO.
+
+SRT and VTT sidecars stay cue-level whatever the burned style is.
+
 ## Splitting rules
 
 - Target: 15-20 cps
@@ -27,19 +39,21 @@ Per caption cue:
 ## Positioning
 
 - Bottom-center default
-- Token-defined offset from bottom (default 10% of height)
+- Bottom edge at least `platformInsetsPx.bottom` above the canvas edge (380px for 9:16 by default); left and right insets from the same token. See `ms-command/references/platform-specs.md`.
+- Token-defined offset from bottom for other aspects (default 10% of height)
 - Safe area per style-tokens.layout.aspectOverrides
 - If a UI element occupies the caption zone, the caption shifts up per the safe area rule
 - No caption overlaps a burned-in caption from a UI element
 
 ## Styling
 
-- Type role: caption (defined in style-tokens.type)
+- Type roles: caption, and captionActive for the current word (defined in style-tokens.type)
 - Size: 40-56px at 1080p (from token)
 - Line height: 1.15x
 - Scrim: token-defined (dark box with 60-80% opacity or a drop shadow)
 - No text-shadow via CSS; the scrim is a Remotion element
-- Fade in and fade out: 4 frames in, 4 frames out (from token)
+- Fade in and fade out: `captions.fadeFrames` (4) in, the same out
+- Scrim colour and opacity from `captions.scrim` (a palette role plus opacity)
 
 ## SRT output
 
@@ -118,10 +132,13 @@ Before gate pass:
 - SRT and VTT parse without error
 - Burned captions visible in the burned master
 - No caption overlaps a UI element
+- Word-level styles: every word frame equals the `vo.json` word frame (CAP-01), every page has at most `maxWordsPerPage` words (CAP-04), the burned style equals `captions.style` (CAP-03)
+- Every caption sits inside the platform insets (CAP-02)
 
 ## Rejected patterns
 
-- Transcribed captions (transcription introduces errors; use script.json)
+- Transcribed captions (transcription introduces errors; use script.json for the text and the VO alignment for word timing)
+- Word timing guessed by splitting a cue evenly
 - Captions with CSS text-shadow
 - Captions longer than 2 lines
 - Captions with more than 42 characters per line

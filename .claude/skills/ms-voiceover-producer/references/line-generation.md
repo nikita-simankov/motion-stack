@@ -12,7 +12,7 @@ Per-line generation procedure. One line at a time, in script order.
 
 1. Read the line from script.json: lineId, text, frameStart, frameEnd, durationFrames.
 2. Compute targetMs = durationFrames / fps \* 1000.
-3. Call the ElevenLabs text-to-speech endpoint with the frozen parameters.
+3. Call the ElevenLabs text-to-speech endpoint with the frozen parameters. When word timings are required (see Word timings below), call the with-timestamps variant and keep the `alignment` object with the raw audio.
 4. Save the raw audio to runs/<id>/audio/raw/<lineId>-attempt<n>.<ext>.
 5. Convert PCM to WAV 48kHz 24-bit for processing.
 6. Trim leading and trailing silence beyond 30ms.
@@ -32,6 +32,22 @@ Per-line generation procedure. One line at a time, in script order.
     c. If the beat is thin, escalate to stage 4.
 12. On ok, save the processed file to runs/<id>/audio/lines/<lineId>.wav.
 13. Record the generation log entry.
+
+## Word timings (v2)
+
+Required when `style-tokens.captions.style` is `word-highlight` or `word-pop`, or any scene uses `word-lockup`. Optional otherwise.
+
+1. Keep the `alignment` object of the accepted attempt next to its audio: `runs/<id>/audio/raw/<lineId>-attempt<n>.alignment.json`.
+2. After trimming (step 6), record the leading trim in ms. Trailing trim does not shift timing.
+3. Convert to frames with `scripts/words_from_alignment.py`:
+
+   words_from_alignment.py <alignment.json> --fps <fps> --line-start-frame <frameStart> --line-end-frame <frameEnd> --trim-lead-ms <leading trim>
+
+4. Write the result into `vo.json` as `lines[].words` (integer frames on the master timeline, no overlap, inside the line range, at least 1 frame each; gaps of 6 frames or fewer are closed so highlights do not flicker).
+5. Speed changes happen at generation (the speed setting), so the final attempt's alignment is already correct. Time-stretch after generation is not allowed for word-timed lines.
+6. A regenerated line replaces its alignment and words. A line whose alignment is missing (cloned voice that does not return it, or a dubbed stem) is aligned by forced alignment against the audio instead (`dubbing-and-localization.md`); mark `wordSource: "forced-alignment"`.
+
+Words keep the punctuation attached to them, so captions show the script's text exactly.
 
 ## Silence lines
 

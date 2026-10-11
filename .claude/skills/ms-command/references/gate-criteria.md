@@ -7,10 +7,10 @@ Facts verified every claim in the dossier carries a source URL or citation
 Concept selected one concept chosen, alternates archived to concepts/alternates/
 Script locked timed to target runtime in frames, visual + text + audio hook in first 2 seconds, CTA present, VO lines pre-timed for ElevenLabs generation
 Boards approved every script beat mapped to a frame, no orphan frames
-Look locked palette, type stack, motion language, easing curves, transition set, grade LUT fixed in style tokens. UI mockup style locked: device frame, fidelity level, interaction states
+Look locked palette, type stack, motion language, named curves and roles, spring presets, choreography, transition set, caption style, camera limits, layout grid and platform insets, grade LUT fixed in style tokens (tokenVersion 2, `validate-tokens.sh` clean). UI mockup style locked: device frame, fidelity level, interaction states, cursor curve, smart zoom
 Assets complete all frames resolved to source files, no placeholders, no missing links. UI mockups built as Remotion components with real interaction states
-Scenes approved Remotion compositions render without error. Timing props (from, trimBefore, durationInFrames) match boards within tolerance. No CSS transitions or Tailwind animation classes
-VO approved ElevenLabs audio generated per line. Pacing matches script timing, no clipped or rushed lines, loudness on target. Model and voice_id logged
+Scenes approved Remotion compositions render without error. Timing props (from, trimBefore, durationInFrames) match boards within tolerance. `audit-motion.sh` reports zero errors, warnings resolved or justified. Motion proof sheet attached. No CSS transitions or Tailwind animation classes
+VO approved ElevenLabs audio generated per line. Pacing matches script timing, no clipped or rushed lines, loudness on target. Model and voice_id logged. Word timings captured per line (integer frames) when the caption style is word-level
 SFX approved no masking of dialogue, levels consistent, hits aligned
 Music approved licensed, in registry, ducked under VO at -18 LUFS, hits aligned to cuts
 Picture lock no further frame changes permitted, timeline frozen. Remotion composition locked

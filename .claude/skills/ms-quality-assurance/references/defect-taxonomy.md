@@ -17,6 +17,9 @@ MU-xx Music licensing, cue sheet, mix ms-music-supervisor
 SD-xx SFX placement, licensing, masking ms-sound-designer
 LEG-xx Legal (licenses, attributions, consent) owning stage
 ACC-xx Accessibility (contrast, captions, alt) owning stage
+TYP-xx Type hierarchy, kinetic type, readability ms-motion-designer
+CMP-xx Composition, focal point, grid, platform insets ms-motion-designer
+CAP-xx Caption timing, style, safe zone ms-finishing-suite
 SCR-xx Script (claim trace, hook, CTA, timing) ms-script-writer
 STB-xx Board (coverage, transition, framing) ms-storyboard-artist
 STY-xx Style token (drift, spec-not-reference) ms-styleframe-designer
@@ -39,6 +42,9 @@ CUT-03 Runtime mismatch
 CUT-04 Gap in the timeline
 CUT-08 Transition mismatch
 CUT-14 Audio anchor misaligned by more than 1 frame
+CUT-15 Cut more than snapFrames off the beat grid when rhythm.beatGrid.required is true
+CUT-16 Loop seam above threshold (frame 0 vs final frame)
+CUT-17 Audio or caption straddles the loop seam
 
 ### ANIM-xx (motion designer)
 
@@ -47,6 +53,39 @@ ANIM-02 Tailwind animation class detected
 ANIM-03 useCurrentFrame not used for animation
 ANIM-04 Easing outside the frozen bucket
 ANIM-05 Transition outside the frozen set
+
+ANIM-06 interpolate() with no easing (linear by accident)
+ANIM-07 Group of three or more animated with no stagger
+ANIM-08 Text hold below max(minHoldFrames, words x readHoldFramesPerWord)
+ANIM-09 One curve covers more than 80% of the eased motion
+ANIM-10 spring() with an inline config instead of a named preset
+ANIM-11 interpolate() not clamped on both sides
+ANIM-12 Exit longer than the entrance it answers
+ANIM-13 Static literal blur() outside MotionBlur or CameraRig
+ANIM-14 Dead hold longer than rhythm.maxStaticFrames without an isolated framing (motion proof sheet)
+ANIM-15 Motion blur on counting numbers or per-glyph reveals
+ANIM-16 Hex colour in scene source that is not in the frozen palette
+
+### TYP-xx (type)
+
+TYP-01 Two competing text blocks within 1.5x of each other in one beat
+TYP-02 Text below the role minimum size at the target aspect
+TYP-03 Variable-font axis value outside the declared range
+TYP-04 Kinetic preset mixed within one text block
+
+### CMP-xx (composition)
+
+CMP-01 No clear focal element in a beat
+CMP-02 Element off the layout grid or baseline without a board note
+CMP-03 Readable content inside the platform overlay zone
+CMP-04 More than four parallax layers, or camera zoom above camera.maxZoom without a board note
+
+### CAP-xx (captions)
+
+CAP-01 Word-level caption more than 1 frame off its VO word
+CAP-02 Caption outside the platform insets
+CAP-03 Caption style differs from captions.style in the tokens
+CAP-04 Caption page exceeds captions.maxWordsPerPage
 
 ### AUD-xx (sound designer)
 
@@ -129,6 +168,7 @@ STY-01 Token is a reference, not a spec
 STY-02 Palette contrast fails
 STY-03 Type role missing from the token set
 STY-04 Motion bucket outside the frozen set
+STY-05 v2 sections defaulted, not authored (minor, v1 token file read as v2)
 
 ### AST-xx (assets)
 

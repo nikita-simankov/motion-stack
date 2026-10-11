@@ -22,6 +22,7 @@ flags active flags
 intake locked intake summary
 render-log Remotion render jobs, lambda invocations, chunk progress
 voice-log ElevenLabs generation calls, model used, character count
+token-version tokenVersion of style-tokens.json (1 or 2); migration records approved migrations
 
 ============================================================
 RUN DASHBOARD
@@ -99,6 +100,10 @@ RUN.JSON SCHEMA
 "intake": { "Q1": "string", "Q2": "string", "...": "..." },
 "renderLog": [
 { "composition": "string", "frames": 0, "fps": 30, "mode": "local | lambda", "chunks": 0, "completed": 0, "status": "pending | running | done | failed" }
+],
+"tokenVersion": 2,
+"migrations": [
+{ "from": 1, "to": 2, "tone": "punchy", "approvedBy": "string", "when": "ISO8601" }
 ],
 "voiceLog": [
 { "model": "string", "voiceId": "string", "characters": 0, "ts": "ISO8601" }

@@ -39,6 +39,8 @@ INVOCATION
 /ms-styleframe-designer audit <project-id> Diff style frames against the token contract
 /ms-styleframe-designer compare <variant-a> <variant-b> Head-to-head on the look
 /ms-styleframe-designer import <token-file> Import a client token set (see --client)
+/ms-styleframe-designer migrate <project-id> [--tone <tone>] Upgrade style tokens from v1 to v2 and re-open the gate (see references/token-migration-v1-to-v2.md)
+/ms-styleframe-designer validate <project-id> Run validate-tokens.sh on the token file
 
 Dispatched by ms-command as stage 6. Never invoked by ms-command mid-pipeline.
 
@@ -61,9 +63,9 @@ WORKFLOW
 2. Extract constraints: visual direction (Q7), tone (Q5), platform set (Q4), UI posture (Q8), motion stack (Q17), voice model (Q18), audio mix (Q13).
 3. Cluster the boards into style frame families. A family is a group of boards that share framing, subject type, and motion posture.
 4. Produce --families style frames, one per family, plus --variants variants each.
-5. Produce the style token contract. Every token is a spec, not a reference.
+5. Produce the style token contract (tokenVersion 2). Every token is a spec, not a reference. Start from a look bundle when the brief gives no brand tokens (references/looks.md). Author motion as tone, curves and roles, springs, choreography and motion blur (references/motion-curves.md); captions, camera, rhythm and layout (grid, focal point, platform insets) belong to the same contract.
 6. Verify every board maps to at least one family. Every board family is styled.
-7. Verify every token is compatible with the brief's motion stack (Remotion + ElevenLabs).
+7. Verify every token is compatible with the brief's motion stack (Remotion + ElevenLabs). Run ms-setup/validate-tokens.sh on the token file; any failure is a blocker.
 8. Verify UI mockup specs are complete when Q8 is C or D.
 9. Verify audio targets are compatible with the platform spec table.
 10. Write runs/<project-id>/styleframes.json, runs/<project-id>/styleframes.md, and runs/<project-id>/style-tokens.json.
@@ -190,14 +192,15 @@ Buckets:
 - medium — 24-45 frames (beat transitions, layout shifts)
 - long — 45-90 frames (scene transitions, push-ins)
 
-Easing set:
+Curves and roles (v2):
 
+- curves — named bezier arrays (out-cubic, in-cubic, in-out-cubic, out-quart, out-quint, out-expo, in-expo, in-out-quart, in-out-expo; out-back in playful tone only)
+- roles — entrance, exit, state, camera, cursor each name a default curve, chosen by tone
+- springs — named presets (land, snappy, soft, heavy; bouncy in playful tone only), each within the overshoot budget
+- choreography — exit ratio, stagger step and cap, overlap, read hold, settle window
+- motionBlur — component, shutter angle, samples, which moves use it
 - linear — reserved for continuous motion (progress, cursor tracking)
-- ease-out — default for entrances
-- ease-in — default for exits
-- ease-in-out — default for state changes
-- spring — reserved for landing moments (CTA, success)
-- bounce — reserved for playful tone, never used in authoritative tone
+- v1 names ease-out, ease-in, ease-in-out stay valid as aliases
 
 Transition set is a subset of the shot vocabulary from stage 5. Lock the set to the transitions actually used in the boards.
 
@@ -205,10 +208,10 @@ Rules:
 
 - No motion is described in seconds. Frames only.
 - No motion uses CSS transitions or Tailwind animation classes.
-- Every motion note in stage 5 boards maps to a bucket and an easing in this set.
+- Every motion note in stage 5 boards maps to a bucket and a curve (or role) in this set.
 - Any motion outside the set triggers an ANIM-xx defect at QA.
 
-See references/motion-language.md for the bucket table and Remotion primitives.
+See references/motion-language.md for the bucket table and Remotion primitives, references/motion-curves.md for curves, springs and choreography, and references/kinetic-type.md for the type presets.
 
 ============================================================
 TEXTURE AND GRADE
@@ -318,6 +321,11 @@ references/style-token-authoring.md Rules for authoring specs, not references
 references/type-system.md Full type role table, font loading via @remotion/google-fonts
 references/color-system.md Palette schema, contrast math, accessibility
 references/motion-language.md Buckets, easings, transition set, Remotion primitives
+references/motion-curves.md Named curves, spring presets, choreography, motion blur (v2)
+references/kinetic-type.md Kinetic type preset library, variable fonts, hierarchy (v2)
+references/looks.md Look bundles, layout system, surfaces (mesh gradient, glass, texture) (v2)
+references/trend-benchmarks.md Dated reference ranges for pacing, motion, type, captions (v2)
+references/token-migration-v1-to-v2.md Migrating style-tokens.json from v1 to v2
 references/texture-and-grade.md Texture and grade token details, LUT handling
 references/ui-mockup-spec.md Device frame spec, states, cursor, spacing
 references/styleframe-protocol.md Expand, retoken, compare, import, audit, rollback

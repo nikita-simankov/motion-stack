@@ -23,6 +23,19 @@ Scene-level QA checklist. Runs before gate 8.
 - [ ] No Math.random without a seed
 - [ ] No Date.now() at render time
 
+## Motion craft (v2)
+
+- [ ] `ms-setup/audit-motion.sh` reports zero errors (ANIM-01 to 04, 06, 10, 11, ANIM-16)
+- [ ] Every warning (ANIM-07, 09, 13) is fixed or carries an `ms:allow` with a reason
+- [ ] Every curve and spring comes from tokens (`useMotion()`); none typed into the scene
+- [ ] Groups of three or more stagger; the next element overlaps the last
+- [ ] Exits are about 65% of their entrances
+- [ ] Every text block holds at least `max(minHoldFrames, words x readHoldFramesPerWord)` frames (ANIM-08, checked on the proof sheet)
+- [ ] At least two distinct curves in the scene when it has six or more eased motions
+- [ ] Motion blur is only inside declared ranges and never on counting numbers or glyph reveals
+- [ ] Camera moves use `CameraRig`, within `camera.maxZoom`
+- [ ] A motion proof sheet exists for the scene (see `review-artifact.md`)
+
 ## Assets
 
 - [ ] Every asset used is present in assets.json
@@ -67,6 +80,7 @@ Scene-level QA checklist. Runs before gate 8.
 ## README
 
 - [ ] Scene folder has a README.md
+- [ ] README lists the curves, springs and kinetic presets used
 - [ ] README lists board id, duration, fps, resolution
 - [ ] README lists assets used
 - [ ] README lists tokens used

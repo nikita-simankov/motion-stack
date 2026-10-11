@@ -23,6 +23,7 @@ Motion Studio — это производственный конвейер дл�
 - [Артефакты запусков](#артефакты-запусков)
 - [Учётные данные и секреты](#учётные-данные-и-секреты)
 - [Технические правила](#технические-правила)
+- [Качество анимации и контракт токенов v2](#качество-анимации-и-контракт-токенов-v2)
 - [Устранение неполадок](#устранение-неполадок)
 
 ---
@@ -171,6 +172,7 @@ cd motion-stack
 motion-stack/
 ├── README.md
 ├── README_RU.md
+├── CHANGELOG.md
 ├── .gitignore
 └── .claude/
     └── skills/
@@ -181,7 +183,10 @@ motion-stack/
         │   ├── SKILL.md
         │   ├── questions.md     # интервью из 10 вопросов
         │   ├── setup.sh         # установка, учётные данные, каркас
-        │   └── verify.sh        # проверки окружения
+        │   ├── verify.sh        # проверки окружения и самопроверки инструментов v2
+        │   ├── migrate-tokens.sh, validate-tokens.sh, tokens-v2-defaults.json
+        │   ├── audit-motion.sh, audit_motion.py
+        │   └── fixtures/        # образец токенов v1, фикстуры линтера
         ├── ms-brand-voice/
         ├── ms-brief-intake/
         ├── ms-topic-research/
@@ -190,11 +195,11 @@ motion-stack/
         ├── ms-storyboard-artist/
         ├── ms-styleframe-designer/
         ├── ms-asset-generator/
-        ├── ms-motion-designer/
-        ├── ms-voiceover-producer/
+        ├── ms-motion-designer/     # + templates/motion (рантайм), scripts/proof_sheet.py
+        ├── ms-voiceover-producer/  # + scripts/words_from_alignment.py
         ├── ms-sound-designer/
-        ├── ms-music-supervisor/
-        ├── ms-video-editor/
+        ├── ms-music-supervisor/    # + scripts/beat_grid.py
+        ├── ms-video-editor/        # + templates/transitions, scripts/loop_check.py
         ├── ms-color-grader/
         ├── ms-finishing-suite/
         ├── ms-quality-assurance/
@@ -235,6 +240,48 @@ motion-stack/
 
 Подробности см. в `.claude/skills/ms-command/references/remotion-stack.md` и `elevenlabs-stack.md`.
 
+## Качество анимации и контракт токенов v2
+
+v2 повышает качество результата, а не только соответствие правилам. v1 требовал, чтобы анимация была покадровой и привязанной к токенам, но не описывал, как выглядит хорошая анимация. v2 добавляет это в виде токенов, которые проверяют линтер и рубрика QA.
+
+| Область | Что добавляет v2 | Где |
+|---|---|---|
+| Анимация | Библиотека именованных кривых (expo, quint, quart и другие), пять ролей кривых по тону, пресеты пружин с измеренным временем успокоения и бюджетом перелёта, правила хореографии: каскад, перекрытие, доля выхода, время на чтение | `ms-styleframe-designer/references/motion-curves.md` |
+| Кинетическая типографика | Шесть пресетов (маска строки, подъём слов, посадка слова по озвучке, набухание веса, контур с заливкой, счётчик), оси вариативных шрифтов, лимит в два семейства | `kinetic-type.md` |
+| Субтитры | Пословные стили `word-highlight` и `word-pop`; временные метки символов ElevenLabs переводятся в целые кадры | `ms-finishing-suite/references/caption-pipeline.md` |
+| Камера и глубина | Виртуальная камера, слои параллакса, размытие по глубине, зум за курсором для демо продукта, motion blur из токенов | `ms-motion-designer/references/camera-rig.md` |
+| Образы и сетка | Шесть пакетов образа, привязанных к вопросу Q7, сетка и правило фокусной точки, меш-градиенты, стекло, полутон, бумага, световые засветы | `looks.md` |
+| Платформы | Безопасные зоны интерфейса платформ для вертикального видео | `ms-command/references/platform-specs.md` |
+| Ритм | Сетка битов с привязкой склеек, аудиореактивная графика, правило бесшовного цикла | `ms-music-supervisor/references/beat-grid.md`, `ms-video-editor/references/seamless-loop.md` |
+| QA | Три новых критерия с высоким весом (качество анимации, иерархия и композиция, отличимость; максимум теперь 75 баллов) и новые коды дефектов (ANIM-06…ANIM-16, TYP, CMP, CAP, STY-05, CUT-15…CUT-17) | `ms-quality-assurance/references/review-rubric.md` |
+
+### Инструменты
+
+| Инструмент | Назначение |
+|---|---|
+| `ms-setup/migrate-tokens.sh` | Миграция `style-tokens.json` с v1 на v2 |
+| `ms-setup/validate-tokens.sh` | Проверка файла токенов v2: кривые, пружины и перелёт, диапазоны хореографии, правила тона, шрифты, субтитры, сетка |
+| `ms-setup/audit-motion.sh` | Линтер анимации по исходникам сцен (ANIM-01…ANIM-16) |
+| `ms-motion-designer/scripts/proof_sheet.py` | Контактный лист и график энергии движения; помечает «мёртвые» паузы |
+| `ms-video-editor/scripts/loop_check.py` | Проверка шва бесшовного цикла |
+| `ms-voiceover-producer/scripts/words_from_alignment.py` | Перевод посимвольной разметки в тайминги слов в кадрах |
+| `ms-music-supervisor/scripts/beat_grid.py` | Сетка битов и привязка склеек (нужен необязательный `librosa`) |
+| `ms-motion-designer/templates/motion/`, `ms-video-editor/templates/transitions/` | Рантайм анимации и переходы, которые `/ms-setup scaffold` копирует в `src/` |
+
+`/ms-setup verify` прогоняет самопроверки всех перечисленных инструментов.
+
+### Обновление существующего проекта
+
+1. `/ms-setup upgrade`, затем `/ms-setup scaffold`. Это переводит Remotion на 4.0.534 и React на 19 и создаёт `src/motion/` и `src/transitions/`. **React 19 обязателен:** `@remotion/transitions` 4.0.534 не собирается на React 18.3.1.
+2. `/ms-command migrate <project-id> [--tone <тон>]`. Рядом с замороженным файлом v1 создаётся файл токенов v2, и контрольная точка 6 открывается заново с разницей. Значения v1 не меняются. Ничего не замораживается до вашего одобрения.
+3. Сцены, уже собранные на токенах v1, остаются действительными. Имена кривых v1 (`ease-out`, `ease-in`, `ease-in-out`) работают через алиасы.
+
+Полная процедура: `ms-styleframe-designer/references/token-migration-v1-to-v2.md`. Несовместимые изменения перечислены в `CHANGELOG.md`.
+
+### Что проверено, а что нет
+
+Проверено в тестовом проекте: все шаблоны рантайма проходят проверку типов против Remotion 4.0.534 и рендерятся в Chromium, повторные рендеры дают идентичные кадры; переходы whip, shape-wipe и iris рендерятся; миграция, валидатор, линтер, контактный лист, проверка цикла, конвертер таймингов слов и сетка битов проходят самопроверки (валидатор — на 19 негативных случаях). Не проверено: полный прогон 17 стадий (нужны живое подключение к ElevenLabs и сессии Claude на каждую стадию), вызов `with-timestamps` в живом API и значения безопасных зон платформ, которые взяты из сторонних измерений. Пакеты образа, диапазоны темпа и значения хореографии по умолчанию — это начальные калибровки; в `trend-benchmarks.md` есть журнал для замены их измеренными значениями.
+
 ## Устранение неполадок
 
 | Симптом | Решение |
@@ -244,6 +291,10 @@ motion-stack/
 | ElevenLabs не настроен | Подключите его MCP-сервер или запустите `/ms-setup creds --api-key-only`. |
 | Стадия постоянно не проходит проверку голоса бренда | Посмотрите совпадения с запрещёнными терминами в `ms-brand-voice/references/banned-terms.md` и верните на доработку с замечаниями. |
 | Потеряно состояние запуска | `/ms-command status <project-id>`. Запуски сохраняются в `runs/<id>/`. |
+| Сборка падает с `__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE ... was not found in 'react'` | Проект на React 18. Запустите `/ms-setup upgrade` (React 19 нужен для `@remotion/transitions` 4.0.534). |
+| `verify` предупреждает, что файл токенов имеет tokenVersion 1 | Он совместим для чтения. Запустите `/ms-command migrate <project-id>`, чтобы заполнить разделы v2. |
+| `audit-motion.sh` выдаёт ANIM-06 на индикаторе прогресса | Непрерывное движение разрешено: пометьте его `// ms:linear`. |
+| Привязка к сетке битов недоступна | Необязательный `librosa` не установился. Оставьте `rhythm.beatGrid.required: false` или установите его в `.venv`. |
 
 ---
 

@@ -37,6 +37,17 @@ voice_settings={
 output_format=output_format
 )
 
+Text to speech with timestamps (v2, required when captions.style is word-highlight or word-pop, or when word-lockup kinetic type is used):
+client.text_to_speech.convert_with_timestamps(
+text=line_text,
+voice_id=voice_id,
+model_id=model_id,
+voice_settings={...same as above...},
+output_format=output_format
+)
+
+The response is JSON: base64 audio plus `alignment` with parallel arrays `characters`, `character_start_times_seconds`, `character_end_times_seconds` (and `normalized_alignment` for the text after number and abbreviation expansion). Use `alignment`, not `normalized_alignment`, so words match the script text. The REST path is `POST /v1/text-to-speech/{voice_id}/with-timestamps`. Method and field names follow the current docs and SDK; confirm them against the installed SDK version at setup, and check any output-format restrictions on the endpoint (generate in a supported format, then convert to PCM 48kHz as usual).
+
 Streaming (only for very long lines; not used in line-by-line mode):
 client.text_to_speech.stream(...)
 

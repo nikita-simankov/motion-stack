@@ -37,6 +37,10 @@ vo.json is the machine-readable VO manifest. vo.md is the human render. The soun
 "frameEnd": 90,
 "targetMs": 3000,
 "silence": false,
+"wordSource": "elevenlabs-alignment | forced-alignment | none",
+"words": [
+{ "text": "Stop", "startFrame": 90, "endFrame": 105 }
+],
 "audio": {
 "path": "runs/<id>/audio/lines/L1.wav",
 "hash": "sha256:...",
@@ -87,6 +91,7 @@ vo.json is the machine-readable VO manifest. vo.md is the human render. The soun
 - modelId and voiceId are frozen for the run. Changing either invalidates all generated lines.
 - Every line's audio.deltaMs = audio.durationMs - targetMs. Overrun if deltaMs > targetMs _ 0.10. Underrun if deltaMs < -targetMs _ 0.40.
 - Silence lines have silence: true and no audio entry.
+- words (v2): integer frames on the master timeline, ordered, non-overlapping, each inside the line's frameStart to frameEnd, each at least 1 frame. Required when captions.style is word-highlight or word-pop, or when word-lockup is used. wordSource records where the timing came from; none is valid only when no word-level feature is used.
 - generationLog records every attempt. Failed attempts are kept.
 - qa.codes collects every VO-xx code raised during QA.
 - qa.passed is true only when qa.codes is empty.

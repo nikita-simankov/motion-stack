@@ -66,6 +66,29 @@ Triggered by /ms-styleframe-designer audit.
 7. Verify audio tokens match the platform spec table.
 8. Emit an audit diff: tokens unchanged, changed, added, removed.
 
+## Migrate
+
+Triggered by /ms-styleframe-designer migrate or /ms-command migrate.
+
+1. Read runs/<project-id>/style-tokens.json. Stop if `tokenVersion` is already 2.
+2. Resolve the tone: `--tone`, else the brief's Q5 (A authoritative, B punchy, C measured, D kinetic).
+3. Run `ms-setup/migrate-tokens.sh <v1> runs/<project-id>/style-tokens.v2.pending.json --tone <tone>`. v1 values always win.
+4. `validate-tokens.sh` runs automatically. A failure stops here and prints the rule.
+5. Present the diff: sections added, tone-driven choices, every v1 value unchanged. Re-open gate 6.
+6. On approve: archive the v1 file as style-tokens.v1.json (read-only), write the approved v2 as style-tokens.json with `frozen: true`, clear `reapprovalRequired`, validate again, record the migration in run.json.
+7. On revise: `retoken` edits the pending file; validate again.
+8. Mark a downstream stage stale only if an approved change altered a value it used.
+
+Full procedure and compatibility rules: `token-migration-v1-to-v2.md`.
+
+## Validate
+
+Triggered by /ms-styleframe-designer validate.
+
+1. Run `ms-setup/validate-tokens.sh runs/<project-id>/style-tokens.json`.
+2. Report each failure with its rule. Failures are blockers at gate 6.
+3. A v1 file is reported as v1 (read-compatible) and is not a failure; QA records STY-05.
+
 ## Rollback
 
 Triggered by ms-command rollback.
@@ -84,6 +107,7 @@ Stop and present when:
 - Every board mapped to a family
 - Every token authored as a spec
 - Contrast, motion, UI, and audio checks pass
+- validate-tokens.sh reports a valid tokenVersion 2 file
 - Drift check passes
 - styleframes.json, styleframes.md, style-tokens.json written
 

@@ -41,6 +41,15 @@ Compute with the WCAG relative luminance formula. Reject any palette that fails.
 - No gradient is defined by two colors without positions
 - Radials are specified with center, radius, and stops
 
+### Mesh gradients (v2)
+
+- `type: "mesh"` in `palette.gradients[]`: a base colour plus 3 to 5 points, each `{ color, x, y, radiusPct }`.
+- Every colour is a palette colour. No freeform colours.
+- Points drift on seeded noise: `seed` (string), `amplitudePct`, `framesPerCycle`. Same seed, same result.
+- Enumerated like every other gradient: the base and every point colour are listed.
+- Contrast is measured against the base colour and each point colour, never "somewhere in the gradient".
+- Implementation: `MeshGradient` in `src/motion/`. See `looks.md`.
+
 ## Dark and light
 
 - Pick one baseline: dark or light

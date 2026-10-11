@@ -37,6 +37,9 @@ INVOCATION
 /ms-setup verify Verify the environment
 /ms-setup reset Reset the studio config (does not uninstall)
 /ms-setup upgrade Upgrade pinned dependencies
+/ms-setup migrate-tokens <in> <out> [--tone T] Migrate a v1 style-tokens.json to v2 (ms-setup/migrate-tokens.sh)
+/ms-setup validate-tokens <file> Validate a v2 style-tokens.json (ms-setup/validate-tokens.sh)
+/ms-setup audit-motion [path] Run the motion lint over scenes (ms-setup/audit-motion.sh)
 
 ## Flags
 
@@ -56,12 +59,12 @@ WORKFLOW
 
 1. Detect OS and package manager.
 2. Verify or install: Node 20+, npm or pnpm, Python 3.10+, git, jq.
-3. Install Remotion CLI and pipeline packages.
+3. Install Remotion CLI and pipeline packages (all Remotion packages pinned to one version, React 19, plus the motion, captions, layout, noise, paths, shapes and media-utils packages).
 4. Install ElevenLabs Python SDK.
 5. Optionally install AWS CLI and configure Lambda credentials.
 6. Resolve credentials (MCP-first, API key fallback).
 7. Run the 10-question studio interview.
-8. Scaffold the directory structure.
+8. Scaffold the directory structure, including the motion runtime (src/motion) and the whip and shape-wipe transitions (src/transitions), copied from the skill templates.
 9. Write runs/\_studio.json and, when a client profile is chosen, runs/\_clients/<profile>.json.
 10. Write .env for any API-key fallbacks (gitignored).
 11. Write runs/\_mcp.json for any MCP bindings.
@@ -222,6 +225,11 @@ No preamble. No restating the OS. No summaries.
 REFERENCES
 
 setup.sh install, scaffold, MCP detection, credential resolution
-verify.sh environment and credential verification
+verify.sh environment and credential verification; also self-tests the v2 tooling (token migration and validator, motion lint, proof sheet, loop checker, VO word timing, beat grid)
+migrate-tokens.sh style-tokens.json v1 to v2 (jq)
+validate-tokens.sh style-tokens.json v2 rule check
+audit-motion.sh, audit_motion.py motion lint over scene source
+tokens-v2-defaults.json default v2 token sections
+fixtures/ v1 token sample and lint fixtures used by verify.sh
 questions.md the 10 questions with choices
 README.md quick-start for the setup process
